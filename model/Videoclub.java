@@ -829,7 +829,13 @@ public class Videoclub {
 
 
 	}
-
+	
+	/**
+	 * Incluído en la  versión 2.4.1 con la expresión regular 
+	 * @param idPeli
+	 * @param idSocio
+	 * @return
+	 */
 	public Boolean getHavistoAlgoParecido(String idPeli, String idSocio) {
 		this.vista.setListaSimilares(this.getBD().listaSimilaresQueHaVisto(idPeli, Integer.parseInt(idSocio)));
 		
