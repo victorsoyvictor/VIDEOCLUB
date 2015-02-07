@@ -181,26 +181,6 @@ public class Videoclub {
 		Videoclub.getInstance().vista.listaAlquileres(false);
 		Videoclub.getInstance().vista.listaDeudores(false);
 		
-		
-		
-//		//TESTING AREA
-//		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-//		Calendar c = Calendar.getInstance();
-//		try {
-//			c.setTime(sdf.parse("2014-09-29"));
-//		} catch (ParseException e) {
-//			e.printStackTrace();
-//		}
-//
-//		Date fechaDevolucion = null;
-//		try {
-//			fechaDevolucion = sdf.parse(sdf.format(c.getTime()));
-//		} catch (ParseException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//		
-//		System.out.println(getSundaysBetweenTwoDates( fechaDevolucion, Calendar.getInstance().getTime() ));
 
 	}
 
@@ -223,10 +203,7 @@ public class Videoclub {
 	 */
 	public void getPelicula(String columna, String valor) {
 		
-		//compruebaPendientes(this.vista.getModeloTablaAlquileres(), idSocio);
-		
 		this.vista.updateVistaPelicula(this.getBD().getPeliculaDB(columna, valor));
-		
 	}
 	
 	/**
@@ -239,38 +216,23 @@ public class Videoclub {
 			
 		ArrayList<String[]> tupla = new ArrayList<String[]>();
 		Boolean quick = true;
+		int tarjetaUltimoSocio = 0;
 		
 		tupla = this.getBD().get3SociosPeliculaDB(columna, valor);
 		
 		
-		//Si hay al menos un socio que la vio antes
+		//Si hay al menos un socio que la vio antes (solo no entra en el if si la peli es nueva)
 		if (tupla.size()>0)
 		{
-			//Busca para la película los 3 últimos socios que la han visto y estudia al primero
+			//Busca para la película los 3 últimos socios que la han visto y estudia al primero: 
+			tarjetaUltimoSocio = Integer.valueOf(tupla.get(0)[1]);
 			this.vista.set3SociosPelicula(tupla);		
-			//Long start_time;
-			//Record the start time.
-			//start_time = System.nanoTime();
-
-			
-
-			//Al loro el -1 que lleva un gran truco, como no tengo la tarjeta, la saco del modelo
-			//de la tabla de los últimos 3 socios que han visto la película
-			this.compruebaPendientes(Integer.valueOf(tupla.get(0)[1]), quick);
-			//Long diff_time = System.nanoTime() - start_time;
-			//System.out.println("	E L A P S E D pendientes :( -> " + (double)diff_time / 1000000000.0);
-			
-			
-			
-//			start_time = System.nanoTime();
-			this.compruebaRetrasos(valor, Integer.valueOf(tupla.get(0)[1]), quick);
-//			diff_time = System.nanoTime() - start_time;
-//			System.out.println("	E L A P S E D retrasos-> :( " + (double)diff_time / 1000000000.0);
-			
-			
-
-			//Calculate how long we've been running in nanoseconds.
-		
+			this.compruebaPendientes(tarjetaUltimoSocio, quick);
+			this.compruebaRetrasos(valor, tarjetaUltimoSocio, quick);
+			//Añadido en 2.4.2 para avisar de que el que viene a devolver tiene algún aviso
+			//(le falta por pagar algo... etc)
+			if (this.getBD().getSocioDB(tupla.get(0)[1]).getAvisar())
+				JOptionPane.showMessageDialog(null, "¡Ojo, este socio tiene AVISO!.");
 		}
 
 		
@@ -319,19 +281,10 @@ public class Videoclub {
 		ArrayList<String[]> tuplas = new ArrayList<String[]>();
 		
 		Videoclub.getInstance().vista.listaAlquileres(quick);
-//		Long start_time;
-//		start_time = System.nanoTime();
 				
 		DefaultTableModel modeloAux = this.vista.getModeloTablaAlquileres();	
 		int numeroDeudores = modeloAux.getRowCount();
 		int numCol = modeloAux.getColumnCount();
-		
-		
-		
-//		Long diff_time = System.nanoTime() - start_time;
-		//System.out.println("	E L A P S E D compruebaPendientes-> " + (double)diff_time / 1000000000.0);
-		
-//		start_time = System.nanoTime();
 		//for (int row = 0; row < this.vista.getModeloTablaAlquileres().getRowCount(); row++) 
 		for (int row = 0; row < numeroDeudores; row++)
 		{
@@ -350,11 +303,7 @@ public class Videoclub {
 			}
 
 		}
-		
-//		diff_time = System.nanoTime() - start_time;
-		//System.out.println("	E L A P S E D compruebaPendientes 2 -> " + (double)diff_time / 1000000000.0);
-		
-		
+
 		if (tuplas.size()>0)
 			this.vista.cartelPendientes(p_idSocio, tuplas.size(), true);
 		else
@@ -370,17 +319,11 @@ public class Videoclub {
 		
 		//Actualizamos la lista de retrasos ya que es de donde vamos a mirar
 		Videoclub.getInstance().vista.listaDeudores(quick);
-//		Long start_time;
-//		start_time = System.nanoTime();
-				
+
 		DefaultTableModel modeloAux = this.vista.getModeloTablaRetrasados();	
 		int numeroDeudores = modeloAux.getRowCount();
 		int numCol = modeloAux.getColumnCount();
 		
-//		Long diff_time = System.nanoTime() - start_time;
-		//System.out.println("	E L A P S E D compruebaRetrasos-> " + (double)diff_time / 1000000000.0);
-		
-//		start_time = System.nanoTime();
 		//Recorro la lista de deudores
 		//for (int row = 0; row < this.vista.getModeloTablaRetrasados().getRowCount(); row++) 
 		for (int row = 0; row < numeroDeudores; row++)
@@ -412,10 +355,7 @@ public class Videoclub {
 			}
 
 		}
-		
-//		diff_time = System.nanoTime() - start_time;
-		//System.out.println("	E L A P S E D compruebaRetrasos 2 -> " + (double)diff_time / 1000000000.0);
-		
+				
 		if (tuplas.size()>0)
 			this.vista.cartelDeudas(p_idSocio, tuplas.size(), true);
 		else
@@ -552,11 +492,9 @@ public class Videoclub {
 	public void devuelvePeliculaSocio(String codPel) {
 		
 		this.getBD().devuelveAlquilaPeliculaDB(Integer.valueOf(codPel), false, 0);
-		
-		vista.blanqueaSocio(true);
+		//2.4.2
+		//vista.blanqueaSocio(true);
 		vista.blanqueaPelicula(true);
-		
-		//JOptionPane.showMessageDialog(this.vista.getFrmVideoClubCapitn(), "La película "+codPel+" ha sido DEVUELTA satisfactoriamente.");
 	}
 
 	/**
@@ -872,7 +810,7 @@ public class Videoclub {
 	 * en la pestaña de los socios
 	 * @param tarjeta
 	 */
-	public void buscaPendientesDeudasSocio(String tarjeta) 
+	public void buscaPendientesRetrasosTablaPestañaSocio(String tarjeta) 
 	{
 		ArrayList<String[]> tuplas = new ArrayList<String[]>();	
 		Boolean quick = true;

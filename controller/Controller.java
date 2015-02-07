@@ -19,10 +19,10 @@ public class Controller {
 		return Videoclub.getInstance().getSocio(clave);
 	}
 	
-	public void buscaPendientesDeudasSocio(String tarjeta)
+	public void buscaPendientesRetrasosParaTablaSocio(String tarjeta)
 	{
 		//Uso el campo codigo de cliente de la vista obtenido en la búsqueda previa	
-		Videoclub.getInstance().buscaPendientesDeudasSocio(tarjeta);
+		Videoclub.getInstance().buscaPendientesRetrasosTablaPestañaSocio(tarjeta);
 
 	}
 
@@ -37,9 +37,6 @@ public class Controller {
 	public void buscaPelicula(String clave)
 	{
 		//Depende de la longitud
-		//si la longitud es de hasta 4 es un codigo de socio
-		//si la longitud es mayor de 4 y menor de 9 y es un numero es un DNI
-		//si no es un nombre
 		if (clave.length()<=4)
 			try {
 				Integer.valueOf(clave);
@@ -104,13 +101,12 @@ public class Controller {
 	}
 
 	/**
-	 * Devolver la película
+	 * Devolver la película dado al "espacio", no confundir con busca3SociosPelicula
 	 * @param codPel
 	 */
 	public void devuelvePeliculaSocio(String codPel) 
 	{
 		Videoclub.getInstance().devuelvePeliculaSocio(codPel);
-		
 	}
 
 	/**
@@ -124,7 +120,6 @@ public class Controller {
 	public void alquilaPeliculaSocio(String tarjeta, String titulo, String codPel, String numPases,  Boolean isPromoViernes) 
 	{
 		Videoclub.getInstance().alquilaPeliculaSocio(tarjeta, titulo, codPel, numPases, isPromoViernes);
-		
 	}
 
 	

@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Vector;
+
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -42,6 +43,7 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
 import net.sourceforge.jdatepicker.impl.JDatePanelImpl;
@@ -58,6 +60,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.print.PrinterException;
 
+import javax.swing.BoxLayout;
+
 
 
 public class GUI {
@@ -66,13 +70,13 @@ public class GUI {
 
 	private static final int alturaFila = 25;
 	
-	private static final int tamañoAviso = 18;
+	private static final int tamañoAviso = 9;//18;
 	
-	private static final int tamañoTexto = 17;
+	private static final int tamañoTexto = 9;//17;
 	
+	private DefaultTableCellRenderer centerRenderer = null;
 	
-	
-	private static final String version = "VdeV2.4.1";
+	private static final String version = "VdeV2.4.2";
 
 	private Controller controlador;
 	private JTextField textSocios;
@@ -301,11 +305,11 @@ public class GUI {
 		});
 	}
 
-
+	
 
 
 	/**
-	 * Create the GUIIIIII!!!!!.
+	 * Constructor publico.
 	 */
 	public GUI() {
 		this.tSocios = new Trie();
@@ -326,7 +330,9 @@ public class GUI {
 		setUIFont (new javax.swing.plaf.FontUIResource(new Font("ARIAL",Font.PLAIN, tamañoTexto)));
 		//Fuente para avisos de colores, de pendientes, retrasadas y devolver
 		Font avisos = new Font("Arial", Font.PLAIN, tamañoAviso);
-
+		this.centerRenderer = new DefaultTableCellRenderer();
+		centerRenderer.setHorizontalAlignment( SwingConstants.CENTER );
+		
 		frmVideoClubCapitn = new JFrame();
 		
 		//Al abrir y cerrar la aplicacion
@@ -457,6 +463,7 @@ public class GUI {
 		textoPelicula.selectAll();
 
 		//BUSCAPELI
+		//Desde el jComboBox
 		comboPelicula.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
 				Object item = comboPelicula.getSelectedItem();
@@ -464,17 +471,9 @@ public class GUI {
 				textoPelicula.requestFocus();
 				System.out.println("[COMBO] busca EN LA BASE DE DATOS la peli "+textoPelicula.getText());
 				controlador.buscaPelicula(textoPelicula.getText());
-				
-				//Tiene que ejecutarse despues de buscaPelicula, no cambiar de sitio
-				//De lo contrario el campo Titulo no se sabrá (busca pelicula tiene lógica
-				//para saber si se busca por titulo o numero de pelicula
-				System.out.println("busca EN LA BASE DE DATOS los 3 ultimos clientes para peli:"+textoPelicula.getText());
-				controlador.busca3SociosPelicula(pNom.getText());
-
-
 			}
 		});
-
+		//Desde el jTextField
 		textoPelicula.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyReleased(KeyEvent arg0) {
@@ -482,18 +481,7 @@ public class GUI {
 					System.out.println("[ENTER] busca EN LA BASE DE DATOS la peli "+textoPelicula.getText());
 					controlador.buscaPelicula(textoPelicula.getText());
 					
-					//Tiene que ejecutarse despues de buscaPelicula, no cambiar de sitio
-					//De lo contrario el campo Titulo no se sabrá (busca pelicula tiene lógica
-					//para saber si se buscar por titulo o numero de pelicula
-					System.out.println("busca EN LA BASE DE DATOS los 3 ultimos clientes para peli:"+textoPelicula.getText());
-					Long start_time;
-					//Record the start time.
-					start_time = System.nanoTime();
-					controlador.busca3SociosPelicula(pNom.getText());	
-					//Calculate how long we've been running in nanoseconds.
-					Long diff_time = System.nanoTime() - start_time;
 					
-					System.out.println("	[[[ E L A P S E D TOTAL ]]] -> " + (double)diff_time / 1000000000.0);
 				}
 
 				Vector<String> v = new Vector<String>(tPeliculas.autoComplete(textoPelicula.getText().toUpperCase()));
@@ -630,7 +618,7 @@ public class GUI {
 		textVincula.setColumns(20);
 		panel_8.add(textVincula);
 
-		//VINCULA SOCIO
+		//VINCULA SOCIO A PELICULA
 		textVincula.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyReleased(KeyEvent arg0) {
@@ -638,17 +626,7 @@ public class GUI {
 					System.out.println("[ENTER] busca EN LA BASE DE DATOS al SOCIO para vincular pelicula");
 					controlador.buscaSocio(textVincula.getText());
 					
-					System.out.println("[ENTER] busca EN LA BASE DE DATOS buscaPendientesRetrasosSocio del socio: "+sSoc.getText());
-					controlador.buscaPendientesDeudasSocio(sSoc.getText());	
-					
-//					Añadido por versión 2.4.0 avisar de si la ha visto salvado el pisto de los títulos					
-					System.out.println("[ENTER] busca EN LA BASE DE DATOS parecidas para el socio: "+sSoc.getText()+ " de la película "+pCod.getText());
-					controlador.haVistoAlgoParecido(pCod.getText(), sSoc.getText());
-					if (getListaSimilares().size() > 0)
-						JOptionPane.showMessageDialog(null, getListaSimilares(), "¡Ojo que ha visto parecidas!", JOptionPane.INFORMATION_MESSAGE);
-					if (controlador.buscaSocio(String.valueOf(sSoc.getText())).getAvisar())
-						JOptionPane.showMessageDialog(null, "¡Ojo, este socio tiene AVISO!.");
-						
+
 				}
 
 				Vector<String> v = new Vector<String>(tSocios.autoComplete(textVincula.getText().toUpperCase()));
@@ -664,17 +642,6 @@ public class GUI {
 				textVincula.setText(selected.toString());
 				System.out.println("[COMBO] busca EN LA BASE DE DATOS al SOCIO para vincular pelicula");
 				controlador.buscaSocio(textVincula.getText());
-				
-				System.out.println("[COMBO] busca EN LA BASE DE DATOS buscaPendientesRetrasosSocio del socio: "+sSoc.getText());
-				controlador.buscaPendientesDeudasSocio(sSoc.getText());	
-				
-//				Añadido por versión 2.4.0 avisar de si la ha visto salvado el pisto de los títulos
-				System.out.println("[COMBO] busca EN LA BASE DE DATOS parecidas para el socio: "+sSoc.getText()+ " de la película "+pCod.getText());
-				controlador.haVistoAlgoParecido(pCod.getText(), sSoc.getText());
-				if (getListaSimilares().size() > 0)
-					JOptionPane.showMessageDialog(null, getListaSimilares(), "¡Ojo que ha visto parecidas!", JOptionPane.INFORMATION_MESSAGE);
-				if (controlador.buscaSocio(String.valueOf(sSoc.getText())).getAvisar())
-					JOptionPane.showMessageDialog(null, "¡Ojo, este socio tiene AVISO!.");
 			}
 		});
 
@@ -778,7 +745,7 @@ public class GUI {
 
 		JPanel pBloqueIzquierdo = new JPanel();
 		sBusqueda.add(pBloqueIzquierdo);
-		pBloqueIzquierdo.setLayout(new GridLayout(3, 0, 0, 0));
+		pBloqueIzquierdo.setLayout(new BoxLayout(pBloqueIzquierdo, BoxLayout.Y_AXIS));
 
 		JPanel panel_25 = new JPanel();
 		FlowLayout flowLayout_11 = (FlowLayout) panel_25.getLayout();
@@ -841,7 +808,7 @@ public class GUI {
 				
 				//Tiene que ejecutarse despues de buscaSocio, no cambiar de sitio para rellenar sSoc
 				System.out.println("[COMBO] busca EN LA BASE DE DATOS buscaPendientesRetrasosSocio del socio: "+sSoc.getText());
-				controlador.buscaPendientesDeudasSocio(sSoc.getText());
+				controlador.buscaPendientesRetrasosParaTablaSocio(sSoc.getText());
 			}
 		});
 
@@ -855,7 +822,7 @@ public class GUI {
 					
 					//Tiene que ejecutarse despues de buscaSocio, no cambiar de sitio para rellenar sSoc
 					System.out.println("[ENTER] busca EN LA BASE DE DATOS buscaPendientesRetrasosSocio del socio: "+sSoc.getText());
-					controlador.buscaPendientesDeudasSocio(sSoc.getText());	
+					controlador.buscaPendientesRetrasosParaTablaSocio(sSoc.getText());	
 				}
 
 				Vector<String> v = new Vector<String>(tSocios.autoComplete(textSocios.getText().toUpperCase()));
@@ -867,10 +834,7 @@ public class GUI {
 
 		JPanel pAlquiladas = new JPanel();
 		pAlquiladas.setBackground(UIManager.getColor ( "Panel.background" ));
-		FlowLayout flowLayout_9 = (FlowLayout) pAlquiladas.getLayout();
-		flowLayout_9.setVgap(15);
-		flowLayout_9.setHgap(0);
-		pAlquiladas.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null), "Pendientes y Deudas", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
+		pAlquiladas.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "Pendientes y Retrasos", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
 		pBloqueIzquierdo.add(pAlquiladas);
 
 
@@ -894,6 +858,7 @@ public class GUI {
 				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
 				JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		scrollDeudas.setPreferredSize(new Dimension(600, 90));
+		pAlquiladas.setLayout(new BoxLayout(pAlquiladas, BoxLayout.Y_AXIS));
 		
 		pAlquiladas.add(scrollPendientes);
 		pAlquiladas.add(scrollDeudas);
@@ -1065,10 +1030,10 @@ public class GUI {
 
 
 
-		/////////////// L I S T A D O S 
+		/////////////// L I S T A D O S (TABLA DEUDAS, SOCIOS, PELICULAS, ALQUILERES
 
 		this.generaListados();
-
+////////////////////////////////////////
 
 		
 		//PIE de aplicación
@@ -1156,15 +1121,16 @@ public class GUI {
 	JPanel listaRestrasos = new JPanel();
 	listaRestrasos.setBorder(new TitledBorder(null, "Listado de socios que deben películas", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 	tabbedPane.addTab("LISTA DE DEUDAS", iconList, listaRestrasos, null);
+	listaRestrasos.setLayout(new BoxLayout(listaRestrasos, BoxLayout.X_AXIS));
 
 	tablaDeudores = new JTable();
 	tablaDeudores.setRowHeight(alturaFila);
-
+	tablaDeudores.setDefaultRenderer(String.class, centerRenderer);
+	tablaDeudores.setDefaultRenderer(Integer.class, centerRenderer);
 	JScrollPane scrollRetrasos = new JScrollPane(tablaDeudores, 
 			JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
 			JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 	scrollRetrasos.setPreferredSize(new Dimension(850, 600));
-
 	listaRestrasos.add(scrollRetrasos);
 
 	bImprimirDeudores = new JButton("Imprimir lista");
@@ -1199,10 +1165,12 @@ public class GUI {
 	JPanel listaSocios = new JPanel();
 	listaSocios.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null), "Listado de socios ordenados por tarjeta, pulsa en las columnas para reordenar", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 	tabbedPane.addTab("LISTA DE SOCIOS", iconList, listaSocios, null);
+	listaSocios.setLayout(new BoxLayout(listaSocios, BoxLayout.X_AXIS));
 
 	tablaSocios = new JTable();
 	tablaSocios.setRowHeight(alturaFila);
-	
+	tablaSocios.setDefaultRenderer(String.class, centerRenderer);
+	tablaSocios.setDefaultRenderer(Integer.class, centerRenderer);
 	JScrollPane scrollSocios = new JScrollPane(tablaSocios, 
 			JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
 			JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
@@ -1238,10 +1206,12 @@ public class GUI {
 	JPanel listaPeliculas = new JPanel();
 	listaPeliculas.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null), "Listado de películas ordenadas por título, pulsa en las columnas para reordenar", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 	tabbedPane.addTab("LISTA DE PELICULAS", iconList, listaPeliculas, null);
+	listaPeliculas.setLayout(new BoxLayout(listaPeliculas, BoxLayout.X_AXIS));
 
 	tablaPeliculas = new JTable();
 	tablaPeliculas.setRowHeight(alturaFila);
-
+	tablaPeliculas.setDefaultRenderer(String.class, centerRenderer);
+	tablaPeliculas.setDefaultRenderer(Integer.class, centerRenderer);
 	JScrollPane scrollPeliculas = new JScrollPane(tablaPeliculas, 
 			JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
 			JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
@@ -1277,10 +1247,12 @@ public class GUI {
 	JPanel listaAlquileres = new JPanel();
 	listaAlquileres.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null), "Listado de alquileres. Alquiladas hoy y a devolver hoy", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 	tabbedPane.addTab("LISTA DE ALQUILERES", iconList, listaAlquileres, null);
+	listaAlquileres.setLayout(new BoxLayout(listaAlquileres, BoxLayout.X_AXIS));
 
 	tablaAlquileres = new JTable();
 	tablaAlquileres.setRowHeight(alturaFila);
-	
+	tablaAlquileres.setDefaultRenderer(String.class, centerRenderer);
+	tablaAlquileres.setDefaultRenderer(Integer.class, centerRenderer);
 	JScrollPane scrollAlquiladas = new JScrollPane(tablaAlquileres, 
 			JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
 			JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
@@ -1338,7 +1310,7 @@ public class GUI {
 		public ClockPane() {
 			setLayout(new BorderLayout());
 			clock = new JLabel();
-			clock.setHorizontalAlignment(JLabel.CENTER);
+			clock.setHorizontalAlignment(SwingConstants.CENTER);
 			clock.setFont(UIManager.getFont("Label.font").deriveFont(Font.TRUETYPE_FONT, 28f));
 			tickTock();
 			add(clock);
@@ -1385,16 +1357,31 @@ public class GUI {
 			this.sNotas.setText(socio.getObservaciones());
 			this.sNum.setText(String.valueOf(socio.getAlquileres()));
 			this.chckbxNewCheckBox.setSelected(socio.getAvisar());
+			
+//			Añadido por versión 2.4.0 avisar de si la ha visto salvado el pisto de los títulos					
+			System.out.println("[updateVistaSocio] parecidas para el socio: ["+sSoc.getText()+ "] de la película ["+pCod.getText()+"]");
+			//Si hay alguna pelicula en pantalla
+			if (!pCod.getText().isEmpty())
+			{
+				controlador.haVistoAlgoParecido(pCod.getText(), String.valueOf(socio.getId()));
+			
+				if (this.getListaSimilares().size() > 0)
+				{
+					JOptionPane.showMessageDialog(null, getListaSimilares(), "¡Ojo que ha visto parecidas!", JOptionPane.INFORMATION_MESSAGE);
+				}
+			}
 
 			//Si hay que avisar o tiene observaciones
-			
+			//Si hay que avisar OJO! EN ROJO xD
 			if ( socio.getAvisar() )
 			{
 				pNotas.setBackground(Color.RED);
 				pAlquilaSocio.setBackground(Color.RED);
 				panel_23.setBackground(Color.RED);
 				panel_8.setBackground(Color.RED);
+				JOptionPane.showMessageDialog(null, "¡Ojo, este socio tiene AVISO!.");
 			}
+			//Si no esta vacío el campo observaciones se pone naranja
 			else if (!socio.getObservaciones().isEmpty())
 			{
 				pNotas.setBackground(Color.ORANGE);
@@ -1409,7 +1396,8 @@ public class GUI {
 				panel_23.setBackground(UIManager.getColor("Panel.background"));
 				panel_8.setBackground(UIManager.getColor("Panel.background"));
 			}
-
+			
+			//Pendiente de revisión, es para "ha visto peli" que esta deprecado encubierto por haVistoParecidas
 			this.pNombreSocio.setText(socio.getNombre());
 			this.pNumSocio.setText(String.valueOf(socio.getId()));
 			comboHaVisto.setEnabled(true);
@@ -1420,6 +1408,11 @@ public class GUI {
 				logicaBotonAlquilar();
 			else if ( this.txtAlquilada.getText().equals("ALQUILADA") )
 				logicaPanelDevolver();
+			
+			
+			System.out.println("[updateVistaSocio] buscaPendientesRetrasosParaTablaSocio del socio: "+ String.valueOf(socio.getId()));
+			controlador.buscaPendientesRetrasosParaTablaSocio(String.valueOf(socio.getId()));	
+			
 
 		}
 		else
@@ -1428,7 +1421,8 @@ public class GUI {
 	}
 
 	public void updateVistaPelicula(Pelicula pelicula) {
-		if (pelicula!=null){
+		if (pelicula!=null)
+		{
 			this.pCod.setText(String.valueOf(pelicula.getId()));
 			this.pNom.setText(pelicula.getNombre());
 			this.pPases.setText(String.valueOf(pelicula.getAlquileres()));
@@ -1436,20 +1430,20 @@ public class GUI {
 			this.pRetrasos.setText(String.valueOf(pelicula.getRetrasos()));
 			this.modeloFecha.setValue(pelicula.getFechaAlta());
 			this.modeloFecha.setSelected(true);
-//			this.textVincula.setEditable(true);
-//			this.textVincula.setEnabled(true);
+//			If inline, soy pro
 			this.txtAlquilada.setText(pelicula.getAlquilada() ? "ALQUILADA" : "DISPONIBLE");
 			this.txtAlquilada.setBackground(pelicula.getAlquilada() ? Color.ORANGE : Color.GREEN);
-
-
+//			Cambio v2.4.2
+			//Tiene que ejecutarse despues de buscaPelicula, no cambiar de sitio
+			//De lo contrario el campo Titulo no se sabrá (busca pelicula tiene lógica
+			//para saber si se buscar por titulo o numero de pelicula
+			System.out.println("busca EN LA BASE DE DATOS los 3 ultimos clientes para peli:"+textoPelicula.getText());
+			controlador.busca3SociosPelicula(pNom.getText());
 
 			if ( this.txtAlquilada.getText().equals("DISPONIBLE") )
 				logicaBotonAlquilar();
 			else if ( this.txtAlquilada.getText().equals("ALQUILADA") )
 				logicaPanelDevolver();
-
-
-
 		}
 		else
 			JOptionPane.showMessageDialog(this.getFrmVideoClubCapitn(), "No se encuentran películas con esos datos.");
@@ -1499,28 +1493,14 @@ public class GUI {
 	 */
 	public void logicaPanelDevolver()
 	{
-//		if (this.txtAlquilada.getText().equals("ALQUILADA"))
-//		{
-			this.txtpnAlquilamos.setVisible(true);
-			System.out.println("[logicaPanelDevolver]"+this.txtpnAlquilamos.getText());
-			this.txtpnAlquilamos.requestFocusInWindow();
-			//this.textVincula.setEnabled(false);
-			this.bAlquilar.setVisible(false);
-			this.panelBotonAlquilar.setBackground(UIManager.getColor("Panel.background"));
+	
+		this.txtpnAlquilamos.setVisible(true);
+		System.out.println("[logicaPanelDevolver]"+this.txtpnAlquilamos.getText());
+		this.txtpnAlquilamos.requestFocusInWindow();
+		//this.textVincula.setEnabled(false);
+		this.bAlquilar.setVisible(false);
+		this.panelBotonAlquilar.setBackground(UIManager.getColor("Panel.background"));
 
-//		}	
-//		else if (this.txtAlquilada.getText().equals("DISPONIBLE"))
-//		{
-//			txtAlquilada.setBackground(Color.GREEN);
-//			this.txtpnAlquilamos.setVisible(false);
-//			this.txtpnPendientes.setVisible(false);
-//			this.txtpnRetrasos.setVisible(false);
-//			this.textVincula.setText("Escribe un socio para alquilar");
-//			this.textVincula.selectAll();
-//			this.textVincula.requestFocusInWindow();
-//			//this.comboVincula.setEnabled(true);
-//			this.textVincula.setEnabled(true);
-//		}	
 	}
 
 	public void set3SociosPelicula(ArrayList<String[]> tupla) {	
@@ -1696,22 +1676,26 @@ public class GUI {
 					return Integer.class;
 				case 1:
 					return String.class;
+				case 2:
+					return Integer.class;
 				default:
 					return String.class;
 				}
 			}
 		};
-		modeloTablaSocios.setColumnIdentifiers(new String[] {"Tarjeta", "Nombre"});
+		modeloTablaSocios.setColumnIdentifiers(new String[] {"Tarjeta", "Nombre", "Número de alquileres"});
 		ArrayList<Socio> aux = controlador.getSocios();
 
 		for (Socio s :aux)
-			modeloTablaSocios.addRow(new Object[] { Integer.valueOf(s.getId()), s.getNombre()});
+			modeloTablaSocios.addRow(new Object[] { Integer.valueOf(s.getId()), s.getNombre(), s.getAlquileres()});
 
 		tablaSocios.setModel(modeloTablaSocios);
 		tablaSocios.getColumnModel().getColumn(0).setPreferredWidth(100);
 		tablaSocios.getColumnModel().getColumn(0).setMinWidth(20);
-		tablaSocios.getColumnModel().getColumn(1).setPreferredWidth(450);
+		tablaSocios.getColumnModel().getColumn(1).setPreferredWidth(350);
 		tablaSocios.getColumnModel().getColumn(1).setMinWidth(20);
+		tablaSocios.getColumnModel().getColumn(2).setPreferredWidth(100);
+		tablaSocios.getColumnModel().getColumn(2).setMinWidth(20);
 
 		tablaSocios.setAutoCreateRowSorter(true);
 		tablaSocios.getRowSorter().toggleSortOrder(0);
@@ -1762,16 +1746,21 @@ public class GUI {
 		if (visible) {
 			text = "El socio " + idSocio + " debe " + retrasos + " película(s)";
 			this.txtpnRetrasos.setVisible(true);
-			this.txtpnRetrasos.setText(text);
-//			if (this.controlador.buscaSocio(String.valueOf(idSocio)).getAvisar())
-//				JOptionPane.showMessageDialog(this.getFrmVideoClubCapitn(), "¡Ojo, este socio tiene AVISO!.");
-//					
+			this.txtpnRetrasos.setText(text);					
 		}
 		else
 			this.txtpnRetrasos.setVisible(false);
 
 	}
-
+	/**
+	 * Cartel para pelis que se alquilaron hoy o se devuelven hoy,
+	 * Las pendientes son las que alquilan sin problemas, es decir,
+	 * no ocasionan molestia al videoclub. Los retrasos son cuando
+	 * se han pasado el día de la devolución
+	 * @param idSocio
+	 * @param pendientes
+	 * @param visible
+	 */
 	public void cartelPendientes(int idSocio, int pendientes, boolean visible) 
 	{
 		String text = new String();
@@ -1780,9 +1769,6 @@ public class GUI {
 					+ " película(s) pendiente(s)";
 			this.txtpnPendientes.setVisible(true);
 			this.txtpnPendientes.setText(text);
-//		if (this.controlador.buscaSocio(String.valueOf(idSocio)).getAvisar())
-//			JOptionPane.showMessageDialog(this.getFrmVideoClubCapitn(), "¡Ojo, este socio tiene AVISO!.");
-//		
 		}
 		else
 			this.txtpnPendientes.setVisible(false);

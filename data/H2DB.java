@@ -496,8 +496,10 @@ public class H2DB {
 
 
 	/**
-	 * Te da las peliculas en un ArrayList de peliculas QUE TIENE UN SOCIO (PARA ALQUILADAS AFINAR)
-	 * @return
+	 * Te busca por título exacto (da errores), esta deprecado encubierto por listaSimilaresQueHaVisto
+	 * Este método no convence porque tienen varias copias de la misma película pero con distinto título,
+	 * por ejemplo: Spiderman bluray, Spiderman 2 1, Spiderman 2 2 
+	 * @return fecha en que la ha visto
 	 */
 	public Date cuandoHaVistoElSocioLaPeliculaDB(String clave, String titulo, int idSocio)
 	{
@@ -550,6 +552,8 @@ public class H2DB {
 	}
 	
 	/**
+	 * Al loro la expresion regular que falla con pelis mal metidas: BLURAY SPIDERMA, o 300 el origen 
+	 * (porque tiene un número al principio)
 	 * Mejora para la versión 2.4.0 que salgan las que ha visto parecidas con el
 	 * lio que tienen los títulos:
 	 *  JUNTOS Y REVUELTOS
@@ -574,7 +578,7 @@ public class H2DB {
 	 * 
 	 * @return la lista de películas con título parecido
 	 */
-	public ArrayList<String> listaSimilaresQueHaVisto (String ID, int idSocio)
+	public ArrayList<String> listaSimilaresQueHaVisto (String IdPeli, int idSocio)
 	{
 		PreparedStatement  stmt = null;
 		String titulo = null;
@@ -586,9 +590,8 @@ public class H2DB {
 			// Hay que buscar el título para el ID de la película en la tabla
 			// PELICULAS
 
-			stmt = con
-					.prepareStatement("SELECT TITULO FROM PELICULAS WHERE ID=?");
-			stmt.setString(1, ID);
+			stmt = con.prepareStatement("SELECT TITULO FROM PELICULAS WHERE ID=?");
+			stmt.setString(1, IdPeli);
 			try (ResultSet rs = stmt.executeQuery()) {
 				// do stuff with query results.
 				while (rs.next()) {
@@ -596,9 +599,7 @@ public class H2DB {
 					titulo = rs.getString(1);
 					if (rs.wasNull())
 						titulo = null;
-					System.out
-							.println("--public Date cuandoHaVistoElSocioLaPeliculaDB(clave id)---->"
-									+ titulo);
+					System.out.println("--ArrayList<String> listaSimilaresQueHaVisto (String IdPeli, int idSocio)---->"+ titulo);
 				}
 			}
 			
@@ -615,7 +616,7 @@ public class H2DB {
 			}
 
 		} catch (Exception e){
-			System.err.println("[EXCEPTION] public ArrayList<String> listaSimilaresQueHaVisto(String ID, int idSocio): " + e.getMessage());
+			System.err.println("[EXCEPTION] public ArrayList<String> listaSimilaresQueHaVisto(String IdPeli, int idSocio): " + e.getMessage());
 		}
 
 		this.cp.dispose();
@@ -815,9 +816,7 @@ public class H2DB {
 	}
 
 	/**
-	 * Te devuelve un socio de la BD atendiendo a una consulta columna valor
-	 * @param clave es el valor que toma la columna, puede ser DNI, COD socio o el nombre completo
-	 * (dado que el nombre completo, nombre y apellido, es lo que se guarda en la Tier
+	 * Te devuelve un socio de la BD dando un ID un NOMBRE, DNI o TELÉFONO
 	 * @param valor
 	 * @return
 	 */
