@@ -122,7 +122,7 @@ public class Videoclub {
 		// Acceder a la BD y cargar datos
 		this.BD = new H2DB();
 		
-		//Se hace 3 veces (aquí y al actualizar pelis y socios), es importante para 
+		//Se hace 3 veces (aquï¿½ y al actualizar pelis y socios), es importante para 
 		//tener los socios y las pelis
 		//actualizadas con lo que mete el cliente por pantalla
 		actualizaTiers();
@@ -139,7 +139,7 @@ public class Videoclub {
 		this.listaBuenaGente = new ArrayList<String[]>();
 
 
-		//Si es un nuevo día empieza en cero, si no coge lo que haya en el fichero
+		//Si es un nuevo dï¿½a empieza en cero, si no coge lo que haya en el fichero
 		cargaAlquiladasDelDia();
 
 	}
@@ -197,7 +197,7 @@ public class Videoclub {
 	
 
 	/**
-	 * Hay que ampliar bastante éste método, quieren que saque retrasos
+	 * Hay que ampliar bastante ï¿½ste mï¿½todo, quieren que saque retrasos
 	 * @param columna
 	 * @param valor
 	 */
@@ -207,8 +207,8 @@ public class Videoclub {
 	}
 	
 	/**
-	 * De lo último que hice, para sacar los 3 últimos socios que han visto la película
-	 * que entra (a devolver o a alquilar) y estudiar al último socio (pendientes y retrasos)
+	 * De lo ï¿½ltimo que hice, para sacar los 3 ï¿½ltimos socios que han visto la pelï¿½cula
+	 * que entra (a devolver o a alquilar) y estudiar al ï¿½ltimo socio (pendientes y retrasos)
 	 * @param columna
 	 * @param valor
 	 */
@@ -224,15 +224,15 @@ public class Videoclub {
 		//Si hay al menos un socio que la vio antes (solo no entra en el if si la peli es nueva)
 		if (tupla.size()>0)
 		{
-			//Busca para la película los 3 últimos socios que la han visto y estudia al primero: 
+			//Busca para la pelï¿½cula los 3 ï¿½ltimos socios que la han visto y estudia al primero: 
 			tarjetaUltimoSocio = Integer.valueOf(tupla.get(0)[1]);
 			this.vista.set3SociosPelicula(tupla);		
 			this.compruebaPendientes(tarjetaUltimoSocio, quick);
 			this.compruebaRetrasos(valor, tarjetaUltimoSocio, quick);
-			//Añadido en 2.4.2 para avisar de que el que viene a devolver tiene algún aviso
+			//Aï¿½adido en 2.4.2 para avisar de que el que viene a devolver tiene algï¿½n aviso
 			//(le falta por pagar algo... etc)
 			if (this.getBD().getSocioDB(tupla.get(0)[1]).getAvisar())
-				JOptionPane.showMessageDialog(null, "¡Ojo, este socio tiene AVISO!.");
+				JOptionPane.showMessageDialog(null, "ï¿½Ojo, este socio tiene AVISO!.");
 		}
 
 		
@@ -262,7 +262,7 @@ public class Videoclub {
 	        endCal.setTime(startDate);
 	    }
 	    
-	    //Excluimos hoy y el día de hoy
+	    //Excluimos hoy y el dï¿½a de hoy
 	    startCal.add(Calendar.DAY_OF_MONTH, 1);
 	    while (startCal.getTimeInMillis() < endCal.getTimeInMillis())
 	    {
@@ -339,8 +339,8 @@ public class Videoclub {
 					retrasosDeLaQueTrae = this.getNumeroRetrasos(this.vista.getModeloTablaRetrasados().getValueAt(row, 4));
 				}
 				
-				//Reservo memoria para guardar las columnas + 1 para colocar ahí los retrasos 
-				//Además le digo que recorra uno menos del modelo, porque hay 5 columnas y no 6
+				//Reservo memoria para guardar las columnas + 1 para colocar ahï¿½ los retrasos 
+				//Ademï¿½s le digo que recorra uno menos del modelo, porque hay 5 columnas y no 6
 				//VAYA TRUCO!!!
 				//String[] record  = new String[this.vista.getModeloTablaRetrasados().getColumnCount() + 1];
 				String[] record  = new String[numCol + 1];
@@ -370,10 +370,10 @@ public class Videoclub {
 	}
 
 	/**
-	 * Obtiene el número de retrasos que tiene una película, 
-	 * se resta uno porque se devuelve al día siguiente 
-	 * y ese día no se cuenta como retraso
-	 * @param fecha es la fecha en que se alquiló la película
+	 * Obtiene el nï¿½mero de retrasos que tiene una pelï¿½cula, 
+	 * se resta uno porque se devuelve al dï¿½a siguiente 
+	 * y ese dï¿½a no se cuenta como retraso
+	 * @param fecha es la fecha en que se alquilï¿½ la pelï¿½cula
 	 * @return retrasos - 1
 	 */
 	private int getNumeroRetrasos(Object fecha)
@@ -403,7 +403,7 @@ public class Videoclub {
 	public Boolean updatePelicula(String cod, String tit, String pases,
 			String PVP, String retrasos, Date fecha, String alquilada)
 	{
-		//Tratamiento y protección de campos
+		//Tratamiento y protecciï¿½n de campos
 		int numPases = 0;
 		int numPVP = 0;
 		int numRetrasos = 0;
@@ -437,7 +437,7 @@ public class Videoclub {
 		
 		this.getBD().updatePeliculaDB(cod, tit, numPases, numPVP, numRetrasos, fecha, alquilada);
 		
-		//Actualizamos TIERS y seteamos en la vista para tener las búsquedas frescas
+		//Actualizamos TIERS y seteamos en la vista para tener las bï¿½squedas frescas
 		this.actualizaTiers();
 		vista.settPeliculas(tPeliculas);
 		
@@ -447,19 +447,19 @@ public class Videoclub {
 	public void updateSocio(String id, String dni, String nombre,
 			String direccion, String telefono, String numAlqui, String notas, Boolean avisar, String email)
 	{
-		//Tratamiento y protección de campos
+		//Tratamiento y protecciï¿½n de campos
 		int numAlquileres = 0;
 
 		try {
 			numAlquileres = Integer.valueOf(numAlqui);
 		} catch (NumberFormatException e) {
-			System.out.println("[EXCEPTION] public void updateSocio( NÚMERO DE ALQUILERES NO ES UN NÚMERO )");
+			System.out.println("[EXCEPTION] public void updateSocio( Nï¿½MERO DE ALQUILERES NO ES UN Nï¿½MERO )");
 		}
 		
 		
 		this.getBD().updateSocioDB(id, dni, nombre, direccion, telefono, numAlquileres, notas, avisar, email);
 		
-		//Actualizamos TIERS y seteamos en la vista para tener las búsquedas frescas
+		//Actualizamos TIERS y seteamos en la vista para tener las bï¿½squedas frescas
 		this.actualizaTiers();
 		vista.settSocios(tSocios);
 
@@ -471,7 +471,7 @@ public class Videoclub {
 		if (id == -1)
 			JOptionPane.showMessageDialog(this.vista.getFrmVideoClubCapitn(), "La pelicula ha tenido problemas al darse de alta.");
 		else
-			JOptionPane.showMessageDialog(this.vista.getFrmVideoClubCapitn(), "Alta correcta, ahora rellena la ficha o déjalo para después.");
+			JOptionPane.showMessageDialog(this.vista.getFrmVideoClubCapitn(), "Alta correcta, ahora rellena la ficha o dï¿½jalo para despuï¿½s.");
 		
 		this.vista.altaPelicula(String.valueOf(id));
 		this.vista.blanqueaPelicula(false);
@@ -483,7 +483,7 @@ public class Videoclub {
 		if (id == -1)
 			JOptionPane.showMessageDialog(this.vista.getFrmVideoClubCapitn(), "El socio ha tenido problemas al darse de alta.");
 		else
-			JOptionPane.showMessageDialog(this.vista.getFrmVideoClubCapitn(), "Alta correcta, ahora rellena la ficha o déjalo para después.");
+			JOptionPane.showMessageDialog(this.vista.getFrmVideoClubCapitn(), "Alta correcta, ahora rellena la ficha o dï¿½jalo para despuï¿½s.");
 		
 		this.vista.altaSocio(String.valueOf(id));
 		this.vista.blanqueaSocio(false);
@@ -523,7 +523,7 @@ public class Videoclub {
 	}
 	
 	/**
-	 * Método retocado en v2.4.1
+	 * Mï¿½todo retocado en v2.4.1
 	 * @param tarjeta
 	 */
 	private void incrementaAlquiladasSocio(String tarjeta) {
@@ -541,11 +541,11 @@ public class Videoclub {
 	/**
 	 * Creo que como no tiene hora, el dame hoy se ha de comprobar
 	 * para el before y after, en lugar de dameHoyPlus que tiene la hora y
-	 * puede ocurrir que le de de plazo hasta una hora avanzada del día del retraso
+	 * puede ocurrir que le de de plazo hasta una hora avanzada del dï¿½a del retraso
 	 * Ej: el tio tiene que devolver el martes, porque alquila el lunes a las 18.39 por ejemplo, 
 	 * entonces le dejo todo el martes para devolver. 
-	 * Pero de la forma en que lo hago (sumando 2 o 3 días), si considero la hora, 
-	 * tendría hasta el miércoles a las 18.39 para devolver, lo cual no es correcto.
+	 * Pero de la forma en que lo hago (sumando 2 o 3 dï¿½as), si considero la hora, 
+	 * tendrï¿½a hasta el miï¿½rcoles a las 18.39 para devolver, lo cual no es correcto.
 	 * @return
 	 */
 	private static Date dameHoy() {
@@ -574,7 +574,7 @@ public class Videoclub {
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
-		return finalDay.equals("sábado");
+		return finalDay.equals("sï¿½bado");
 	}
 
 
@@ -590,18 +590,18 @@ public class Videoclub {
 		
 		
 		if (aux == null)
-			JOptionPane.showMessageDialog(this.vista.getFrmVideoClubCapitn(), "El socio "+tarjeta+", no ha visto la película "+titulo+".");
+			JOptionPane.showMessageDialog(this.vista.getFrmVideoClubCapitn(), "El socio "+tarjeta+", no ha visto la pelï¿½cula "+titulo+".");
 		else
-			JOptionPane.showMessageDialog(this.vista.getFrmVideoClubCapitn(), "El socio "+tarjeta+", ha visto la película "+titulo+" en "+aux.toString()+".");
+			JOptionPane.showMessageDialog(this.vista.getFrmVideoClubCapitn(), "El socio "+tarjeta+", ha visto la pelï¿½cula "+titulo+" en "+aux.toString()+".");
 		
 	}
 	
 
 	/**
-	 * Método más MÁGICO Y DELICADO
+	 * Mï¿½todo mï¿½s Mï¿½GICO Y DELICADO
 	 * 
-	 * Partiendo de la info extraída de la BD se confecciona una lista de socios
-	 * con deudas y el día que alquilaron y falta añadir los días de retraso
+	 * Partiendo de la info extraï¿½da de la BD se confecciona una lista de socios
+	 * con deudas y el dï¿½a que alquilaron y falta aï¿½adir los dï¿½as de retraso
 	 */
 	public void getDeudoresADevolverHoyRetrasos(Boolean quick)
 	{
@@ -643,14 +643,14 @@ public class Videoclub {
 			//TARJETA  	NOMBRE  	ID  	TITULO  	FECHA  	PROMOVIERNES  
 			//2778	DIONISIO DE HARO MORENO	260	SPIDERS	2014-07-25	TRUE		
 			
-			//Recorro el histórico de alquileres por ordenado por fecha desc (order by fecha desc)
-			//Alquiler más reciente arriba del todo! (pero hay que ver que siga alquilada (siguiente if)
+			//Recorro el histï¿½rico de alquileres por ordenado por fecha desc (order by fecha desc)
+			//Alquiler mï¿½s reciente arriba del todo! (pero hay que ver que siga alquilada (siguiente if)
 			for (String[] tuplaHist : historico)
 			{			
-				//If pelicula alquilada está en el histórico... 
-				//procesamos y pasamos al siguiente título con alquilado = true  (hay un break al final de éste if)
-				//para que no siga buscando una vez que encuentra el título alquilado más reciente en el 
-				//histórico.
+				//If pelicula alquilada estï¿½ en el histï¿½rico... 
+				//procesamos y pasamos al siguiente tï¿½tulo con alquilado = true  (hay un break al final de ï¿½ste if)
+				//para que no siga buscando una vez que encuentra el tï¿½tulo alquilado mï¿½s reciente en el 
+				//histï¿½rico.
 				if (tuplaAlq.equals(tuplaHist[3]))
 				{
 					//si promo viernes columna 5 de la tupla
@@ -658,7 +658,7 @@ public class Videoclub {
 					{
 						try {
 							c.setTime(sdf.parse(tuplaHist[4]));//la columna 4 tiene la fecha
-							// La fecha será hasta el martes 00:00 para que tenga todo el 
+							// La fecha serï¿½ hasta el martes 00:00 para que tenga todo el 
 							// lunes hasta las 23:59 para devolver por eso sumo 4
 							c.add(Calendar.DATE, 4); 
 							fechaDevolucion = sdf.parse(sdf.format(c.getTime()));
@@ -682,7 +682,7 @@ public class Videoclub {
 					{
 						try {
 							c.setTime(sdf.parse(tuplaHist[4]));
-							// la fecha será el martes que sea a las 00:00 para dejarle devolver todo el lunes hasta las 23:59
+							// la fecha serï¿½ el martes que sea a las 00:00 para dejarle devolver todo el lunes hasta las 23:59
 							c.add(Calendar.DATE, 3);  
 							fechaDevolucion = sdf.parse(sdf.format(c.getTime()));
 
@@ -699,10 +699,10 @@ public class Videoclub {
 
 						else
 							listaBuenaGente.add(tuplaHist);
-					}//fin else if es Sábado
+					}//fin else if es Sï¿½bado
 					
 					
-					//Un día normal entiendo yo... puede que se escapen casos
+					//Un dï¿½a normal entiendo yo... puede que se escapen casos
 					else
 					{
 						try {
@@ -724,13 +724,13 @@ public class Videoclub {
 					}
 					
 					
-					//Acierto, pues rompo el bucle y paso a la siguiente película alquilada
+					//Acierto, pues rompo el bucle y paso a la siguiente pelï¿½cula alquilada
 					break;
 				}//fin del if del acierto
-			}//fin del for del histórico
+			}//fin del for del histï¿½rico
 		}//fin del for de alquiladas = true
 		
-		//Debugging... algun día lo borraré
+		//Debugging... algun dï¿½a lo borrarï¿½
 //		for (String[] tupla : listaDeudores)
 //		{
 //			
@@ -763,12 +763,12 @@ public class Videoclub {
 				} catch (NumberFormatException e) {
 					this.alquiladasHoy = 0;
 					this.vista.updateAlquiladasHoy(this.alquiladasHoy);
-					System.out.println("[EXCEPTION] Fichero contiene un valor no numérico:["+ text +"]");
+					System.out.println("[EXCEPTION] Fichero contiene un valor no numï¿½rico:["+ text +"]");
 				}
 			}
 		} catch (FileNotFoundException e) {
 			//e.printStackTrace();
-			System.out.println("Fichero no encontrado para recuperar alquileres, al cerrar se creará con fecha: "+filename);
+			System.out.println("Fichero no encontrado para recuperar alquileres, al cerrar se crearï¿½ con fecha: "+filename);
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
@@ -805,12 +805,12 @@ public class Videoclub {
 	}
 
 	/**
-	 * Se llama desde la pestaña socios o películas al buscar un socio. 
+	 * Se llama desde la pestaï¿½a socios o pelï¿½culas al buscar un socio. 
 	 * Sirve para pintar las dos tablas
-	 * en la pestaña de los socios
+	 * en la pestaï¿½a de los socios
 	 * @param tarjeta
 	 */
-	public void buscaPendientesRetrasosTablaPestañaSocio(String tarjeta) 
+	public void buscaPendientesRetrasosTablaPestaniaSocio(String tarjeta) 
 	{
 		ArrayList<String[]> tuplas = new ArrayList<String[]>();	
 		Boolean quick = true;
@@ -821,8 +821,8 @@ public class Videoclub {
 
 		tuplas.clear();
 
-		//null, que es el título de la película para mirar los retrasos de la película,
-		//Desde la pestaña socio no se que película se está alquilando (podría pero no lo han pedido)
+		//null, que es el tï¿½tulo de la pelï¿½cula para mirar los retrasos de la pelï¿½cula,
+		//Desde la pestaï¿½a socio no se que pelï¿½cula se estï¿½ alquilando (podrï¿½a pero no lo han pedido)
 		tuplas.addAll(this.compruebaRetrasos(null, Integer.valueOf(tarjeta), quick));
 		this.vista.setTablaDeudas(tuplas);
 
@@ -831,7 +831,7 @@ public class Videoclub {
 	}
 	
 	/**
-	 * Incluído en la  versión 2.4.1 con la expresión regular 
+	 * Incluï¿½do en la  versiï¿½n 2.4.1 con la expresiï¿½n regular 
 	 * @param idPeli
 	 * @param idSocio
 	 * @return

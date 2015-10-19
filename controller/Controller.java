@@ -21,13 +21,13 @@ public class Controller {
 	
 	public void buscaPendientesRetrasosParaTablaSocio(String tarjeta)
 	{
-		//Uso el campo codigo de cliente de la vista obtenido en la búsqueda previa	
-		Videoclub.getInstance().buscaPendientesRetrasosTablaPestañaSocio(tarjeta);
+		//Uso el campo codigo de cliente de la vista obtenido en la bï¿½squeda previa	
+		Videoclub.getInstance().buscaPendientesRetrasosTablaPestaniaSocio(tarjeta);
 
 	}
 
 	/**
-	 * Ñapa para meter a pelo el codigo de la película en v2.4
+	 * ï¿½apa para meter a pelo el codigo de la pelï¿½cula en v2.4
 	 * @param clave
 	 */
 	public int getIDPelicula(String clave)
@@ -56,7 +56,7 @@ public class Controller {
 	
 	
 	/**
-	 * Puede dar problemas si la película se llama 300 pero bueno...
+	 * Puede dar problemas si la pelï¿½cula se llama 300 pero bueno...
 	 * @param clave
 	 */
 	public void busca3SociosPelicula(String clave) {
@@ -64,7 +64,7 @@ public class Controller {
 	}
 	
 	/**
-	 * Actualiza lo que hayan tocado de la película
+	 * Actualiza lo que hayan tocado de la pelï¿½cula
 	 * @param cod
 	 * @param tit
 	 * @param pases
@@ -101,7 +101,7 @@ public class Controller {
 	}
 
 	/**
-	 * Devolver la película dado al "espacio", no confundir con busca3SociosPelicula
+	 * Devolver la pelï¿½cula dado al "espacio", no confundir con busca3SociosPelicula
 	 * @param codPel
 	 */
 	public void devuelvePeliculaSocio(String codPel) 
@@ -110,7 +110,7 @@ public class Controller {
 	}
 
 	/**
-	 * Alquilar la película
+	 * Alquilar la pelï¿½cula
 	 * @param tarjeta
 	 * @param titulo
 	 * @param codPel
@@ -135,7 +135,7 @@ public class Controller {
 	}
 
 	/**
-	 * Método para el listado de socios
+	 * Mï¿½todo para el listado de socios
 	 * @return
 	 */
 	public ArrayList<Socio> getSocios() 
@@ -145,7 +145,7 @@ public class Controller {
 	}
 
 	/**
-	 * Método para el listados de películas
+	 * Mï¿½todo para el listados de pelï¿½culas
 	 * @return
 	 */
 	public ArrayList<Pelicula> getPeliculas() 
@@ -177,8 +177,8 @@ public class Controller {
 	}
 
 	/**
-	 * Cuando cierra la aplicación guarda el fichero con 
-	 * el número de alquileres que llevamos
+	 * Cuando cierra la aplicaciï¿½n guarda el fichero con 
+	 * el nï¿½mero de alquileres que llevamos
 	 */
 	public void cerrandoAplicacion()
 	{
